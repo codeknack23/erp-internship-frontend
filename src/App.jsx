@@ -8,6 +8,10 @@ import CustomerForm from "./pages/CustomerForm";
 import VendorList from "./pages/VendorList";
 import VendorForm from "./pages/VendorForm";
 
+// Import react-toastify for global notifications
+import { ToastContainer } from 'react-toastify'; 
+import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
+
 export default function App() {
   return (
     <div className="min-h-screen flex">
@@ -27,6 +31,19 @@ export default function App() {
           </Routes>
         </main>
       </div>
+
+      {/* Global ToastContainer for notifications */}
+      <ToastContainer 
+        position="top-right" 
+        autoClose={5000} 
+        hideProgressBar 
+        newestOnTop 
+        closeOnClick 
+        rtl={false} 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
+      />
     </div>
   );
 }

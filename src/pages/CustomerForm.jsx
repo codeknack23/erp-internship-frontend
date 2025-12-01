@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ContactTable from "../components/ContactTable";
 import api from "../api/axiosClient";
+// Import toast from react-toastify
+import { toast } from 'react-toastify';
 
 export default function CustomerForm() {
   const { id } = useParams();
@@ -22,7 +24,9 @@ export default function CustomerForm() {
   const [loading, setLoading] = useState(false);   // spinner for save button
   const [fetching, setFetching] = useState(false); // spinner for load
 
-  useEffect(()=>{ if (id) load(); }, [id]);
+  useEffect(() => { 
+    if (id) load(); 
+  }, [id]);
 
   const load = async () => {
     setFetching(true);
@@ -40,24 +44,35 @@ export default function CustomerForm() {
       });
       setContacts(res.data.contacts && res.data.contacts.length ? res.data.contacts : contacts);
     } catch (e) {
-      alert('Failed to load customer');
+      toast.error('Failed to load customer');
     } finally {
       setFetching(false);
     }
   };
 
   const save = async () => {
-    if (!form.customerName) return alert('Customer name required');
-    if (!contacts || contacts.length === 0) return alert('At least one contact is required');
+    if (!form.customerName) {
+      toast.error('Customer name required');
+      return;
+    }
+    if (!contacts || contacts.length === 0) {
+      toast.error('At least one contact is required');
+      return;
+    }
 
     const payload = { ...form, contacts };
     setLoading(true);
     try {
-      if (id) await api.put(`/customers/${id}`, payload);
-      else await api.post('/customers', payload);
+      if (id) {
+        await api.put(`/customers/${id}`, payload);
+        toast.success('Customer updated successfully!');
+      } else {
+        await api.post('/customers', payload);
+        toast.success('Customer created successfully!');
+      }
       navigate('/customers');
     } catch (e) {
-      alert(e.response?.data?.message || 'Save failed');
+      toast.error(e.response?.data?.message || 'Save failed');
     } finally {
       setLoading(false);
     }
@@ -90,7 +105,7 @@ export default function CustomerForm() {
           </label>
           <input 
             value={form.customerName} 
-            onChange={e=>setForm({...form, customerName: e.target.value})} 
+            onChange={e => setForm({ ...form, customerName: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
           />
 
@@ -99,7 +114,7 @@ export default function CustomerForm() {
           </label>
           <input 
             value={form.shortName} 
-            onChange={e=>setForm({...form, shortName: e.target.value})} 
+            onChange={e => setForm({ ...form, shortName: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
           />
 
@@ -108,7 +123,7 @@ export default function CustomerForm() {
               <label className="block text-sm text-gray-600">City</label>
               <input 
                 value={form.city} 
-                onChange={e=>setForm({...form, city:e.target.value})} 
+                onChange={e => setForm({ ...form, city: e.target.value })} 
                 className="w-full border rounded px-3 py-2 mt-1" 
               />
             </div>
@@ -116,7 +131,7 @@ export default function CustomerForm() {
               <label className="block text-sm text-gray-600">State</label>
               <input 
                 value={form.state} 
-                onChange={e=>setForm({...form, state:e.target.value})} 
+                onChange={e => setForm({ ...form, state: e.target.value })} 
                 className="w-full border rounded px-3 py-2 mt-1" 
               />
             </div>
@@ -125,7 +140,7 @@ export default function CustomerForm() {
           <label className="block text-sm text-gray-600 mt-3">Pincode</label>
           <input 
             value={form.pincode} 
-            onChange={e=>setForm({...form, pincode:e.target.value})} 
+            onChange={e => setForm({ ...form, pincode: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
           />
         </div>
@@ -136,19 +151,19 @@ export default function CustomerForm() {
           </label>
           <input 
             value={form.email} 
-            onChange={e=>setForm({...form, email:e.target.value})} 
+            onChange={e => setForm({ ...form, email: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
           />
           <label className="block text-sm text-gray-600 mt-3">Phone</label>
           <input 
             value={form.phone} 
-            onChange={e=>setForm({...form, phone:e.target.value})} 
+            onChange={e => setForm({ ...form, phone: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
           />
           <label className="block text-sm text-gray-600 mt-3">GSTIN</label>
           <input 
             value={form.gstin} 
-            onChange={e=>setForm({...form, gstin:e.target.value})} 
+            onChange={e => setForm({ ...form, gstin: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
           />
         </div>
@@ -165,7 +180,7 @@ export default function CustomerForm() {
           {loading ? <Spinner /> : id ? 'Update' : 'Create'}
         </button>
         <button 
-          onClick={()=>navigate('/customers')} 
+          onClick={() => navigate('/customers')} 
           className="px-3 py-1 border rounded"
         >
           Cancel
