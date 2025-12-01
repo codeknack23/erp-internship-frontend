@@ -19,12 +19,13 @@ export default function CustomerForm() {
   });
 
   const [contacts, setContacts] = useState([{ name: '', phone: '', email:'', designation:'', isPrimary: true }]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Spinner for save button
+  const [fetching, setFetching] = useState(false); // Spinner while loading customer data
 
   useEffect(()=>{ if (id) load(); }, [id]);
 
   const load = async () => {
-    setLoading(true);
+    setFetching(true);
     try {
       const res = await api.get(`/customers/${id}`);
       setForm({
@@ -40,23 +41,40 @@ export default function CustomerForm() {
       setContacts(res.data.contacts && res.data.contacts.length ? res.data.contacts : contacts);
     } catch (e) {
       alert('Failed to load customer');
-    } finally { setLoading(false); }
+    } finally {
+      setFetching(false);
+    }
   };
 
   const save = async () => {
-    // validations
     if (!form.customerName) return alert('Customer name required');
     if (!contacts || contacts.length === 0) return alert('At least one contact is required');
 
     const payload = { ...form, contacts };
+    setLoading(true);
     try {
       if (id) await api.put(`/customers/${id}`, payload);
       else await api.post('/customers', payload);
       navigate('/customers');
     } catch (e) {
       alert(e.response?.data?.message || 'Save failed');
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Spinner component
+  const Spinner = () => (
+    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+  );
+
+  if (fetching) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -100,7 +118,13 @@ export default function CustomerForm() {
       <ContactTable contacts={contacts} setContacts={setContacts} />
 
       <div className="mt-4 flex gap-2">
-        <button onClick={save} className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition">{id ? 'Update' : 'Create'}</button>
+        <button
+          onClick={save}
+          disabled={loading}
+          className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition w-24 flex justify-center"
+        >
+          {loading ? <Spinner /> : id ? 'Update' : 'Create'}
+        </button>
         <button onClick={()=>navigate('/customers')} className="px-3 py-1 border rounded">Cancel</button>
       </div>
     </div>

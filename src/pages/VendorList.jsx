@@ -85,7 +85,7 @@ export default function VendorList() {
               {loadingList ? (
                 <tr>
                   <td colSpan="5" className="py-6 text-center text-gray-500">
-                    <Spinner /> Loading vendors...
+                    <Spinner />
                   </td>
                 </tr>
               ) : vendors.length === 0 ? (

@@ -19,10 +19,13 @@ export default function VendorForm() {
     msme: false
   });
   const [contacts, setContacts] = useState([{ name: '', phone: '', isPrimary: true }]);
+  const [loading, setLoading] = useState(false); // spinner for save
+  const [fetching, setFetching] = useState(false); // spinner for load
 
-  useEffect(()=>{ if (id) load(); }, [id]);
+  useEffect(() => { if (id) load(); }, [id]);
 
   const load = async () => {
+    setFetching(true);
     try {
       const res = await api.get(`/vendors/${id}`);
       setForm({
@@ -37,7 +40,11 @@ export default function VendorForm() {
         msme: res.data.msme || false
       });
       setContacts(res.data.contacts && res.data.contacts.length ? res.data.contacts : contacts);
-    } catch (e) { alert('Failed to load vendor'); }
+    } catch (e) {
+      alert('Failed to load vendor');
+    } finally {
+      setFetching(false);
+    }
   };
 
   const save = async () => {
@@ -45,12 +52,30 @@ export default function VendorForm() {
     if (!contacts || contacts.length === 0) return alert('At least one contact required');
 
     const payload = { ...form, contacts };
+    setLoading(true);
     try {
       if (id) await api.put(`/vendors/${id}`, payload);
       else await api.post('/vendors', payload);
       navigate('/vendors');
-    } catch (e) { alert(e.response?.data?.message || 'Save failed'); }
+    } catch (e) {
+      alert(e.response?.data?.message || 'Save failed');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Spinner component
+  const Spinner = () => (
+    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+  );
+
+  if (fetching) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -85,7 +110,13 @@ export default function VendorForm() {
       <ContactTable contacts={contacts} setContacts={setContacts} />
 
       <div className="mt-4 flex gap-2">
-        <button onClick={save} className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition">{ id ? 'Update' : 'Create' }</button>
+        <button
+          onClick={save}
+          disabled={loading}
+          className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition w-24 flex justify-center"
+        >
+          {loading ? <Spinner /> : id ? 'Update' : 'Create'}
+        </button>
         <button onClick={()=>navigate('/vendors')} className="px-3 py-1 border rounded">Cancel</button>
       </div>
     </div>
