@@ -13,6 +13,9 @@ export default function CustomerList() {
   const navigate = useNavigate();
 
   const Spinner = () => (
+    <span className="inline-block w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+  );
+  const Spinner2 = () => (
     <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
   );
 
@@ -123,7 +126,7 @@ export default function CustomerList() {
                           >
                             {loadingId === c._id ? (
                               <>
-                                <Spinner />
+                                <Spinner2 />
                               </>
                             ) : (
                               "Deactivate"
@@ -137,7 +140,7 @@ export default function CustomerList() {
                           >
                             {loadingId === c._id ? (
                               <>
-                                <Spinner />
+                                <Spinner2 />
                               </>
                             ) : (
                               "Activate"
