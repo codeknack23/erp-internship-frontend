@@ -88,14 +88,18 @@ export default function VendorForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="card">
-          <label className="block text-sm text-gray-600">Vendor Name</label>
+          <label className="block text-sm text-gray-600">
+            Vendor Name <span className="text-red-500">*</span>
+          </label>
           <input 
             value={form.vendorName} 
             onChange={e => setForm({ ...form, vendorName: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
           />
 
-          <label className="block text-sm text-gray-600 mt-3">Short Name</label>
+          <label className="block text-sm text-gray-600 mt-3">
+            Short Name <span className="text-red-500">*</span>
+          </label>
           <input 
             value={form.shortName} 
             onChange={e => setForm({ ...form, shortName: e.target.value })} 
@@ -111,7 +115,9 @@ export default function VendorForm() {
         </div>
 
         <div className="card">
-          <label className="block text-sm text-gray-600">Email</label>
+          <label className="block text-sm text-gray-600">
+            Email <span className="text-red-500">*</span>
+          </label>
           <input 
             value={form.email} 
             onChange={e => setForm({ ...form, email: e.target.value })} 
