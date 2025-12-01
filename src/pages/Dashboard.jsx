@@ -56,6 +56,12 @@ export default function Dashboard() {
           <div className="text-3xl mt-2 font-bold">
             {loadingCustomers ? <Spinner /> : totalCustomers}
           </div>
+          {/* See All Link */}
+          {!loadingCustomers && (
+            <a href="/customers" className="text-sm text-blue-600 hover:underline mt-2 inline-block">
+              See All
+            </a>
+          )}
         </div>
 
         {/* Total Vendors */}
@@ -64,6 +70,12 @@ export default function Dashboard() {
           <div className="text-3xl mt-2 font-bold">
             {loadingVendors ? <Spinner /> : totalVendors}
           </div>
+          {/* See All Link */}
+          {!loadingVendors && (
+            <a href="/vendors" className="text-sm text-blue-600 hover:underline mt-2 inline-block">
+              See All
+            </a>
+          )}
         </div>
 
       </div>
