@@ -85,14 +85,18 @@ export default function CustomerForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="card">
-          <label className="block text-sm text-gray-600">Customer Name</label>
+          <label className="block text-sm text-gray-600">
+            Customer Name <span className="text-red-500">*</span>
+          </label>
           <input 
             value={form.customerName} 
             onChange={e=>setForm({...form, customerName: e.target.value})} 
             className="w-full border rounded px-3 py-2 mt-1" 
           />
 
-          <label className="block text-sm text-gray-600 mt-3">Short Name</label>
+          <label className="block text-sm text-gray-600 mt-3">
+            Short Name <span className="text-red-500">*</span>
+          </label>
           <input 
             value={form.shortName} 
             onChange={e=>setForm({...form, shortName: e.target.value})} 
@@ -127,7 +131,9 @@ export default function CustomerForm() {
         </div>
 
         <div className="card">
-          <label className="block text-sm text-gray-600">Email</label>
+          <label className="block text-sm text-gray-600">
+            Email <span className="text-red-500">*</span>
+          </label>
           <input 
             value={form.email} 
             onChange={e=>setForm({...form, email:e.target.value})} 
