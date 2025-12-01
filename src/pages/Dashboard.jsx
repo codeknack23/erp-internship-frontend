@@ -9,8 +9,8 @@ function formatLogDate(log) {
 }
 
 export default function Dashboard() {
-  const [totalCustomers, setTotalCustomers] = useState("…");
-  const [totalVendors, setTotalVendors] = useState("…");
+  const [totalCustomers, setTotalCustomers] = useState("0");
+  const [totalVendors, setTotalVendors] = useState("0");
   const [recent, setRecent] = useState([]);
 
   useEffect(() => {

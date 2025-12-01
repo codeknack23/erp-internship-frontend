@@ -4,57 +4,57 @@ import api from "../api/axiosClient";
 
 export default function CustomerList() {
   const [customers, setCustomers] = useState([]);
-  const [page, setPage] = useState(1);        // Current page number
-  const [total, setTotal] = useState(0);      // Total number of customers
-  const [limit] = useState(10);               // Limit of 10 customers per page
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [limit] = useState(10);
+
+  const [loadingId, setLoadingId] = useState(null); // NEW: loading for a specific row
+
   const navigate = useNavigate();
 
   // Fetch customers based on the page and limit
   const fetchCustomers = async (pageNum = 1) => {
     try {
       const res = await api.get("/customers", {
-        params: {
-          page: pageNum,  // Page number
-          limit: limit,    // Limit of 10 customers per page
-        },
+        params: { page: pageNum, limit: limit },
       });
 
       setCustomers(res.data.items || []);
-      setTotal(res.data.total || 0);  // Set total number of customers
-      setPage(res.data.page);         // Set the current page from the response
+      setTotal(res.data.total || 0);
+      setPage(res.data.page);
     } catch (err) {
       console.error(err);
       alert("Failed to load customers");
     }
   };
 
-  // Fetch data when component mounts or page changes
   useEffect(() => {
     fetchCustomers(page);
   }, [page]);
 
+  // Toggle Active/Inactive status
   const toggleStatus = async (id, cur) => {
+    setLoadingId(id); // Start loader for this row
+
     try {
       await api.patch(`/customers/${id}/status`, {
         status: cur === "Active" ? "Inactive" : "Active",
       });
-      fetchCustomers(page); // Refresh data after status update
+
+      await fetchCustomers(page); // Refresh table
     } catch (e) {
       alert("Status update failed");
+    } finally {
+      setLoadingId(null); // Stop loader
     }
   };
 
-  // Pagination handling
   const handlePrevPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
+    if (page > 1) setPage(page - 1);
   };
 
   const handleNextPage = () => {
-    if (page * limit < total) {
-      setPage(page + 1);
-    }
+    if (page * limit < total) setPage(page + 1);
   };
 
   return (
@@ -91,10 +91,12 @@ export default function CustomerList() {
                   <td>{c.city}</td>
                   <td>{c.phone}</td>
 
-                  {/* Status color-coded + fixed width */}
+                  {/* Status color-coded */}
                   <td
                     className={`font-semibold ${
-                      c.status === "Active" ? "text-green-600" : "text-red-600"
+                      c.status === "Active"
+                        ? "text-green-600"
+                        : "text-red-600"
                     } w-24 text-center`}
                   >
                     {c.status}
@@ -103,7 +105,7 @@ export default function CustomerList() {
                   <td>
                     <div className="flex gap-2 justify-center">
 
-                      {/* Edit Button — fixed width */}
+                      {/* Edit Button */}
                       <button
                         onClick={() => navigate(`/customers/edit/${c._id}`)}
                         className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition w-24"
@@ -111,20 +113,22 @@ export default function CustomerList() {
                         Edit
                       </button>
 
-                      {/* Active/Inactive Buttons — fixed width */}
+                      {/* Activate / Deactivate Button with Loader */}
                       {c.status === "Active" ? (
                         <button
                           onClick={() => toggleStatus(c._id, c.status)}
                           className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition w-24"
+                          disabled={loadingId === c._id}
                         >
-                          Deactivate
+                          {loadingId === c._id ? "Deactivating..." : "Deactivate"}
                         </button>
                       ) : (
                         <button
                           onClick={() => toggleStatus(c._id, c.status)}
                           className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition w-24"
+                          disabled={loadingId === c._id}
                         >
-                          Activate
+                          {loadingId === c._id ? "Activating..." : "Activate"}
                         </button>
                       )}
                     </div>
@@ -143,7 +147,7 @@ export default function CustomerList() {
           </table>
         </div>
 
-        {/* Pagination Controls */}
+        {/* Pagination */}
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={handlePrevPage}
@@ -152,9 +156,11 @@ export default function CustomerList() {
           >
             Previous
           </button>
+
           <span>
             Page {page} of {Math.ceil(total / limit)}
           </span>
+
           <button
             onClick={handleNextPage}
             disabled={page * limit >= total}

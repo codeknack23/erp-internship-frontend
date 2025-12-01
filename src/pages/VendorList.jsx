@@ -6,7 +6,10 @@ export default function VendorList() {
   const [vendors, setVendors] = useState([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [limit, setLimit] = useState(10);  // You can change this value based on your needs
+  const [limit, setLimit] = useState(10);
+
+  const [loadingId, setLoadingId] = useState(null); // NEW: loading state for a specific vendor
+
   const navigate = useNavigate();
 
   // Fetch vendors with pagination
@@ -33,28 +36,29 @@ export default function VendorList() {
     fetchVendors(page);
   }, [page]);
 
+  // Toggle Active/Inactive status
   const toggleStatus = async (id, cur) => {
+    setLoadingId(id); // Start loader
+
     try {
       await api.patch(`/vendors/${id}/status`, {
         status: cur === "Active" ? "Inactive" : "Active",
       });
-      fetchVendors(page); // Refresh data after status update
+
+      await fetchVendors(page); // Refresh table
     } catch (e) {
       alert("Status update failed");
+    } finally {
+      setLoadingId(null); // Stop loader
     }
   };
 
-  // Pagination handling
   const handlePrevPage = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
+    if (page > 1) setPage(page - 1);
   };
 
   const handleNextPage = () => {
-    if (page * limit < total) {
-      setPage(page + 1);
-    }
+    if (page * limit < total) setPage(page + 1);
   };
 
   return (
@@ -89,18 +93,20 @@ export default function VendorList() {
                   <td>{v.vendorName}</td>
                   <td>{v.city}</td>
 
-                  {/* Status color-coded + fixed width */}
                   <td
                     className={`font-semibold ${
-                      v.status === "Active" ? "text-green-600" : "text-red-600"
-                    } w-24 text-center`}
+                      v.status === "Active"
+                        ? "text-green-600"
+                        : "text-red-600"
+                    } w-24`}
                   >
                     {v.status}
                   </td>
 
                   <td>
                     <div className="flex gap-2 justify-center">
-                      {/* Edit Button — fixed width */}
+
+                      {/* Edit Button */}
                       <button
                         onClick={() => navigate(`/vendors/edit/${v._id}`)}
                         className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition w-24"
@@ -108,22 +114,25 @@ export default function VendorList() {
                         Edit
                       </button>
 
-                      {/* Active/Inactive Buttons — fixed width */}
+                      {/* Activate / Deactivate with Loader */}
                       {v.status === "Active" ? (
                         <button
                           onClick={() => toggleStatus(v._id, v.status)}
                           className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition w-24"
+                          disabled={loadingId === v._id}
                         >
-                          Deactivate
+                          {loadingId === v._id ? "Deactivating..." : "Deactivate"}
                         </button>
                       ) : (
                         <button
                           onClick={() => toggleStatus(v._id, v.status)}
                           className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition w-24"
+                          disabled={loadingId === v._id}
                         >
-                          Activate
+                          {loadingId === v._id ? "Activating..." : "Activate"}
                         </button>
                       )}
+
                     </div>
                   </td>
                 </tr>
@@ -140,7 +149,7 @@ export default function VendorList() {
           </table>
         </div>
 
-        {/* Pagination Controls */}
+        {/* Pagination */}
         <div className="flex justify-between items-center mt-4">
           <button
             onClick={handlePrevPage}
@@ -149,9 +158,11 @@ export default function VendorList() {
           >
             Previous
           </button>
+
           <span>
             Page {page} of {Math.ceil(total / limit)}
           </span>
+
           <button
             onClick={handleNextPage}
             disabled={page * limit >= total}
