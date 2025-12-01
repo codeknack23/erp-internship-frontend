@@ -81,7 +81,7 @@ export default function CustomerList() {
               {loadingList ? (
                 <tr>
                   <td colSpan="6" className="py-6 text-center text-gray-500">
-                    <Spinner /> Loading customers...
+                    <Spinner />
                   </td>
                 </tr>
               ) : customers.length === 0 ? (
