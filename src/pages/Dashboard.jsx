@@ -57,11 +57,11 @@ export default function Dashboard() {
           <div className="text-3xl mt-2 font-bold">
             {loadingCustomers ? <Spinner /> : totalCustomers}
           </div>
-          {/* See All Link */}
+          {/* See All Link - aligned right */}
           {!loadingCustomers && (
             <Link
               to="/customers"
-              className="text-sm bg-gray-900 text-white px-3 py-1 rounded hover:bg-gray-800 mt-2 inline-block"
+              className="text-sm text-blue-600 hover:underline mt-2 inline-block text-right w-full"
             >
               See All
             </Link>
@@ -74,11 +74,11 @@ export default function Dashboard() {
           <div className="text-3xl mt-2 font-bold">
             {loadingVendors ? <Spinner /> : totalVendors}
           </div>
-          {/* See All Link */}
+          {/* See All Link - aligned right */}
           {!loadingVendors && (
             <Link
               to="/vendors"
-              className="text-sm bg-gray-900 text-white px-3 py-1 rounded hover:bg-gray-800 mt-2 inline-block"
+              className="text-sm text-blue-600 hover:underline mt-2 inline-block text-right w-full"
             >
               See All
             </Link>
