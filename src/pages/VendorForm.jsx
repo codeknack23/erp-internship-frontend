@@ -19,10 +19,12 @@ export default function VendorForm() {
     msme: false
   });
   const [contacts, setContacts] = useState([{ name: '', phone: '', isPrimary: true }]);
-  const [loading, setLoading] = useState(false); // spinner for save
+  const [loading, setLoading] = useState(false);   // spinner for save button
   const [fetching, setFetching] = useState(false); // spinner for load
 
-  useEffect(() => { if (id) load(); }, [id]);
+  useEffect(() => { 
+    if (id) load(); 
+  }, [id]);
 
   const load = async () => {
     setFetching(true);
@@ -66,9 +68,10 @@ export default function VendorForm() {
 
   // Spinner component
   const Spinner = () => (
-    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
   );
 
+  // Show centered spinner while fetching
   if (fetching) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -86,22 +89,55 @@ export default function VendorForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="card">
           <label className="block text-sm text-gray-600">Vendor Name</label>
-          <input value={form.vendorName} onChange={e=>setForm({...form, vendorName: e.target.value})} className="w-full border rounded px-3 py-2 mt-1" />
+          <input 
+            value={form.vendorName} 
+            onChange={e => setForm({ ...form, vendorName: e.target.value })} 
+            className="w-full border rounded px-3 py-2 mt-1" 
+          />
+
           <label className="block text-sm text-gray-600 mt-3">Short Name</label>
-          <input value={form.shortName} onChange={e=>setForm({...form, shortName: e.target.value})} className="w-full border rounded px-3 py-2 mt-1" />
+          <input 
+            value={form.shortName} 
+            onChange={e => setForm({ ...form, shortName: e.target.value })} 
+            className="w-full border rounded px-3 py-2 mt-1" 
+          />
+
           <label className="block text-sm text-gray-600 mt-3">City</label>
-          <input value={form.city} onChange={e=>setForm({...form, city: e.target.value})} className="w-full border rounded px-3 py-2 mt-1" />
+          <input 
+            value={form.city} 
+            onChange={e => setForm({ ...form, city: e.target.value })} 
+            className="w-full border rounded px-3 py-2 mt-1" 
+          />
         </div>
 
         <div className="card">
           <label className="block text-sm text-gray-600">Email</label>
-          <input value={form.email} onChange={e=>setForm({...form, email: e.target.value})} className="w-full border rounded px-3 py-2 mt-1" />
+          <input 
+            value={form.email} 
+            onChange={e => setForm({ ...form, email: e.target.value })} 
+            className="w-full border rounded px-3 py-2 mt-1" 
+          />
+
           <label className="block text-sm text-gray-600 mt-3">Phone</label>
-          <input value={form.phone} onChange={e=>setForm({...form, phone: e.target.value})} className="w-full border rounded px-3 py-2 mt-1" />
+          <input 
+            value={form.phone} 
+            onChange={e => setForm({ ...form, phone: e.target.value })} 
+            className="w-full border rounded px-3 py-2 mt-1" 
+          />
+
           <label className="block text-sm text-gray-600 mt-3">GSTIN</label>
-          <input value={form.gstin} onChange={e=>setForm({...form, gstin: e.target.value})} className="w-full border rounded px-3 py-2 mt-1" />
+          <input 
+            value={form.gstin} 
+            onChange={e => setForm({ ...form, gstin: e.target.value })} 
+            className="w-full border rounded px-3 py-2 mt-1" 
+          />
+
           <label className="inline-flex items-center gap-2 mt-3">
-            <input type="checkbox" checked={form.msme} onChange={e=>setForm({...form, msme: e.target.checked})} />
+            <input 
+              type="checkbox" 
+              checked={form.msme} 
+              onChange={e => setForm({ ...form, msme: e.target.checked })} 
+            />
             <span className="text-sm">MSME</span>
           </label>
         </div>
@@ -113,11 +149,16 @@ export default function VendorForm() {
         <button
           onClick={save}
           disabled={loading}
-          className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition w-24 flex justify-center"
+          className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition w-24 flex items-center justify-center"
         >
           {loading ? <Spinner /> : id ? 'Update' : 'Create'}
         </button>
-        <button onClick={()=>navigate('/vendors')} className="px-3 py-1 border rounded">Cancel</button>
+        <button 
+          onClick={() => navigate('/vendors')} 
+          className="px-3 py-1 border rounded"
+        >
+          Cancel
+        </button>
       </div>
     </div>
   );
