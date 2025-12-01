@@ -1,33 +1,51 @@
 import { useState } from "react";
 import ContactModal from "./ContactModal";
+import { toast } from "react-toastify"; // Import toast for notifications
 
 export default function ContactTable({ contacts, setContacts }) {
   const [open, setOpen] = useState(false);
   const [editingIdx, setEditingIdx] = useState(-1);
 
-  const openAdd = () => { setEditingIdx(-1); setOpen(true); };
-  const openEdit = (idx) => { setEditingIdx(idx); setOpen(true); };
+  const openAdd = () => {
+    setEditingIdx(-1); 
+    setOpen(true);
+  };
+
+  const openEdit = (idx) => {
+    setEditingIdx(idx); 
+    setOpen(true);
+  };
 
   const onSave = (contact) => {
     let updated = [...contacts];
-    // ensure only one primary
+    // Ensure only one primary contact
     if (contact.isPrimary) updated = updated.map(c => ({ ...c, isPrimary: false }));
 
-    if (editingIdx >= 0) updated[editingIdx] = contact;
-    else updated.push(contact);
+    if (editingIdx >= 0) {
+      updated[editingIdx] = contact; // Update the contact at the editing index
+      toast.success("Contact updated successfully");
+    } else {
+      updated.push(contact); // Add new contact
+      toast.success("Contact added successfully");
+    }
 
-    // If still no primary, mark first
+    // If there's no primary contact, mark the first one as primary
     if (!updated.some(c => c.isPrimary) && updated.length > 0) updated[0].isPrimary = true;
 
     setContacts(updated);
   };
 
   const remove = (idx) => {
-    if (contacts.length <= 1) return alert("At least one contact required");
-    const updated = contacts.filter((_, i) => i !== idx);
-    // ensure primary exists
-    if (!updated.some(c => c.isPrimary) && updated.length > 0) updated[0].isPrimary = true;
-    setContacts(updated);
+    if (contacts.length <= 1) return toast.error("At least one contact required");
+
+    // Confirm deletion
+    if (window.confirm("Are you sure you want to delete this contact?")) {
+      const updated = contacts.filter((_, i) => i !== idx);
+      // Ensure primary contact exists after deletion
+      if (!updated.some(c => c.isPrimary) && updated.length > 0) updated[0].isPrimary = true;
+      setContacts(updated);
+      toast.success("Contact deleted successfully");
+    }
   };
 
   return (
@@ -35,7 +53,12 @@ export default function ContactTable({ contacts, setContacts }) {
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-medium">Contacts</h3>
         <div>
-          <button className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition" onClick={openAdd}>Add Contact</button>
+          <button 
+            className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition"
+            onClick={openAdd}
+          >
+            Add Contact
+          </button>
         </div>
       </div>
 
@@ -58,8 +81,18 @@ export default function ContactTable({ contacts, setContacts }) {
                 <td>{c.email}</td>
                 <td>{c.isPrimary ? <span className="text-green-600 font-semibold ">Yes</span> : 'No'}</td>
                 <td className="py-2">
-                  <button className="px-2 py-1 mr-2 border rounded bg-gray-900 text-white hover:bg-gray-800 transition" onClick={()=>openEdit(i)}>Edit</button>
-                  <button className="px-2 py-1 border rounded" onClick={()=>remove(i)}>Delete</button>
+                  <button 
+                    className="px-2 py-1 mr-2 border rounded bg-gray-900 text-white hover:bg-gray-800 transition"
+                    onClick={() => openEdit(i)}
+                  >
+                    Edit
+                  </button>
+                  <button 
+                    className="px-2 py-1 border rounded"
+                    onClick={() => remove(i)}
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
@@ -67,7 +100,12 @@ export default function ContactTable({ contacts, setContacts }) {
         </table>
       </div>
 
-      <ContactModal open={open} onClose={()=>setOpen(false)} onSave={onSave} initial={editingIdx>=0 ? contacts[editingIdx] : null} />
+      <ContactModal 
+        open={open} 
+        onClose={() => setOpen(false)} 
+        onSave={onSave} 
+        initial={editingIdx >= 0 ? contacts[editingIdx] : null} 
+      />
     </div>
   );
 }

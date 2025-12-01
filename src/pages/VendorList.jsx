@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axiosClient";
+// Import toast from react-toastify
+import { toast } from 'react-toastify';
 
 export default function VendorList() {
   const [vendors, setVendors] = useState([]);
@@ -10,7 +12,6 @@ export default function VendorList() {
   const [loadingList, setLoadingList] = useState(true); // Table loader
   const [loadingId, setLoadingId] = useState(null); // Button loader
   const navigate = useNavigate();
-
 
   const Spinner = () => (
     <span className="inline-block w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
@@ -31,7 +32,7 @@ export default function VendorList() {
       setPage(res.data.page);
     } catch (e) {
       console.error(e);
-      alert("Failed to load vendors");
+      toast.error("Failed to load vendors");
     } finally {
       setLoadingList(false);
     }
@@ -49,8 +50,9 @@ export default function VendorList() {
         status: cur === "Active" ? "Inactive" : "Active",
       });
       await fetchVendors(page);
+      toast.success(`Vendor ${cur === "Active" ? "deactivated" : "activated"} successfully`);
     } catch (e) {
-      alert("Status update failed");
+      toast.error("Status update failed");
     } finally {
       setLoadingId(null);
     }
@@ -104,11 +106,7 @@ export default function VendorList() {
                     <td>{v.vendorName}</td>
                     <td>{v.city}</td>
                     <td
-                      className={`font-semibold ${
-                        v.status === "Active"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      } w-24 text-center`}
+                      className={`font-semibold ${v.status === "Active" ? "text-green-600" : "text-red-600"} w-24 text-center`}
                     >
                       {v.status}
                     </td>
@@ -130,9 +128,7 @@ export default function VendorList() {
                             className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition w-32 flex items-center justify-center gap-2"
                           >
                             {loadingId === v._id ? (
-                              <>
-                                <Spinner2 />
-                              </>
+                              <Spinner2 />
                             ) : (
                               "Deactivate"
                             )}
@@ -144,9 +140,7 @@ export default function VendorList() {
                             className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition w-32 flex items-center justify-center gap-2"
                           >
                             {loadingId === v._id ? (
-                              <>
-                                <Spinner2 />
-                              </>
+                              <Spinner2 />
                             ) : (
                               "Activate"
                             )}

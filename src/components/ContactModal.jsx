@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { toast } from "react-toastify"; // For toast notifications
 
 export default function ContactModal({ open, onClose, onSave, initial }) {
   const [form, setForm] = useState({
@@ -32,11 +33,27 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
     }));
   };
 
+  // Validate form fields
+  const validateForm = () => {
+    if (!form.name || !form.phone) {
+      toast.error("Name and phone are required");
+      return false;
+    }
+    // Email validation (basic format check)
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (form.email && !emailRegex.test(form.email)) {
+      toast.error("Please enter a valid email address");
+      return false;
+    }
+    return true;
+  };
+
   const save = () => {
-    if (!form.name || !form.phone)
-      return alert("Name and phone are required");
+    if (!validateForm()) return; // Don't proceed if validation fails
+
     onSave(form);
     onClose();
+    toast.success("Contact saved successfully");
   };
 
   return (
@@ -66,7 +83,7 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
           >
             <Dialog.Panel className="mx-auto max-w-md rounded bg-white p-6 shadow">
               <Dialog.Title className="text-lg font-medium">
-                New Contact
+                {initial ? "Edit Contact" : "New Contact"}
               </Dialog.Title>
 
               <div className="mt-4 space-y-3">
@@ -77,6 +94,7 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
                     value={form.name}
                     onChange={handleChange}
                     className="w-full border rounded px-3 py-2"
+                    placeholder="Enter contact name"
                   />
                 </div>
 
@@ -87,6 +105,7 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
                     value={form.phone}
                     onChange={handleChange}
                     className="w-full border rounded px-3 py-2"
+                    placeholder="Enter phone number"
                   />
                 </div>
 
@@ -97,6 +116,7 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
                     value={form.email}
                     onChange={handleChange}
                     className="w-full border rounded px-3 py-2"
+                    placeholder="Enter email address"
                   />
                 </div>
 
@@ -124,7 +144,8 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
 
                 <button
                   onClick={save}
-                  className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition "
+                  disabled={!form.name || !form.phone}
+                  className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition"
                 >
                   Save
                 </button>

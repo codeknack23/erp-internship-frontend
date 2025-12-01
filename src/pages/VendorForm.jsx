@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ContactTable from "../components/ContactTable";
 import api from "../api/axiosClient";
+// Import toast from react-toastify
+import { toast } from 'react-toastify';
 
 export default function VendorForm() {
   const { id } = useParams();
@@ -43,24 +45,35 @@ export default function VendorForm() {
       });
       setContacts(res.data.contacts && res.data.contacts.length ? res.data.contacts : contacts);
     } catch (e) {
-      alert('Failed to load vendor');
+      toast.error('Failed to load vendor');
     } finally {
       setFetching(false);
     }
   };
 
   const save = async () => {
-    if (!form.vendorName) return alert('Vendor name required');
-    if (!contacts || contacts.length === 0) return alert('At least one contact required');
+    if (!form.vendorName) {
+      toast.error('Vendor name required');
+      return;
+    }
+    if (!contacts || contacts.length === 0) {
+      toast.error('At least one contact required');
+      return;
+    }
 
     const payload = { ...form, contacts };
     setLoading(true);
     try {
-      if (id) await api.put(`/vendors/${id}`, payload);
-      else await api.post('/vendors', payload);
+      if (id) {
+        await api.put(`/vendors/${id}`, payload);
+        toast.success('Vendor updated successfully!');
+      } else {
+        await api.post('/vendors', payload);
+        toast.success('Vendor created successfully!');
+      }
       navigate('/vendors');
     } catch (e) {
-      alert(e.response?.data?.message || 'Save failed');
+      toast.error(e.response?.data?.message || 'Save failed');
     } finally {
       setLoading(false);
     }
@@ -83,7 +96,7 @@ export default function VendorForm() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-semibold">{ id ? 'Edit Vendor' : 'Add Vendor' }</h1>
+        <h1 className="text-2xl font-semibold">{id ? 'Edit Vendor' : 'Add Vendor'}</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

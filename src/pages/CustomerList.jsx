@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axiosClient";
+// Import toast from react-toastify
+import { toast } from 'react-toastify';
 
 export default function CustomerList() {
   const [customers, setCustomers] = useState([]);
@@ -28,8 +30,8 @@ export default function CustomerList() {
       setCustomers(res.data.items || []);
       setTotal(res.data.total || 0);
       setPage(res.data.page);
-    } catch {
-      alert("Failed to load customers");
+    } catch (error) {
+      toast.error("Failed to load customers");
     } finally {
       setLoadingList(false); // Stop loader
     }
@@ -45,9 +47,10 @@ export default function CustomerList() {
       await api.patch(`/customers/${id}/status`, {
         status: cur === "Active" ? "Inactive" : "Active",
       });
-      await fetchCustomers(page);
-    } catch {
-      alert("Status update failed");
+      fetchCustomers(page);
+      toast.success(`Customer ${cur === "Active" ? "deactivated" : "activated"} successfully`);
+    } catch (error) {
+      toast.error("Status update failed");
     } finally {
       setLoadingId(null);
     }
@@ -101,11 +104,7 @@ export default function CustomerList() {
                     <td>{c.city}</td>
                     <td>{c.phone}</td>
                     <td
-                      className={`font-semibold ${
-                        c.status === "Active"
-                          ? "text-green-600"
-                          : "text-red-600"
-                      } w-24 text-center`}
+                      className={`font-semibold ${c.status === "Active" ? "text-green-600" : "text-red-600"} w-24 text-center`}
                     >
                       {c.status}
                     </td>
@@ -124,13 +123,7 @@ export default function CustomerList() {
                             className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition w-32 flex items-center justify-center gap-2"
                             disabled={loadingId === c._id}
                           >
-                            {loadingId === c._id ? (
-                              <>
-                                <Spinner2 />
-                              </>
-                            ) : (
-                              "Deactivate"
-                            )}
+                            {loadingId === c._id ? <Spinner2 /> : "Deactivate"}
                           </button>
                         ) : (
                           <button
@@ -138,13 +131,7 @@ export default function CustomerList() {
                             className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition w-32 flex items-center justify-center gap-2"
                             disabled={loadingId === c._id}
                           >
-                            {loadingId === c._id ? (
-                              <>
-                                <Spinner2 />
-                              </>
-                            ) : (
-                              "Activate"
-                            )}
+                            {loadingId === c._id ? <Spinner2 /> : "Activate"}
                           </button>
                         )}
                       </div>
