@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import axiosClient from "../api/axiosClient";
 
 // Spinner Component
@@ -58,9 +59,12 @@ export default function Dashboard() {
           </div>
           {/* See All Link */}
           {!loadingCustomers && (
-            <a href="/customers" className="text-sm text-blue-600 hover:underline mt-2 inline-block">
+            <Link
+              to="/customers"
+              className="text-sm bg-gray-900 text-white px-3 py-1 rounded hover:bg-gray-800 mt-2 inline-block"
+            >
               See All
-            </a>
+            </Link>
           )}
         </div>
 
@@ -72,9 +76,12 @@ export default function Dashboard() {
           </div>
           {/* See All Link */}
           {!loadingVendors && (
-            <a href="/vendors" className="text-sm text-blue-600 hover:underline mt-2 inline-block">
+            <Link
+              to="/vendors"
+              className="text-sm bg-gray-900 text-white px-3 py-1 rounded hover:bg-gray-800 mt-2 inline-block"
+            >
               See All
-            </a>
+            </Link>
           )}
         </div>
 
