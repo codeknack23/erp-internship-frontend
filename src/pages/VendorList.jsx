@@ -15,9 +15,6 @@ export default function VendorList() {
   const Spinner = () => (
     <span className="inline-block w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
   );
-  const Spinner2 = () => (
-    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-  );
 
   // Fetch vendors
   const fetchVendors = async (pageNum = 1) => {
@@ -131,7 +128,7 @@ export default function VendorList() {
                           >
                             {loadingId === v._id ? (
                               <>
-                                <Spinner2 />
+                                <Spinner />
                               </>
                             ) : (
                               "Deactivate"
@@ -145,7 +142,7 @@ export default function VendorList() {
                           >
                             {loadingId === v._id ? (
                               <>
-                                <Spinner2 />
+                                <Spinner />
                               </>
                             ) : (
                               "Activate"
