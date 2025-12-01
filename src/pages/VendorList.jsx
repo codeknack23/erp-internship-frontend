@@ -107,7 +107,7 @@ export default function VendorList() {
                         >
                           {loadingId === v._id ? (
                             <>
-                              <Spinner /> Deactivating...
+                              <Spinner />
                             </>
                           ) : (
                             "Deactivate"
@@ -121,7 +121,7 @@ export default function VendorList() {
                         >
                           {loadingId === v._id ? (
                             <>
-                              <Spinner /> Activating...
+                              <Spinner />
                             </>
                           ) : (
                             "Activate"

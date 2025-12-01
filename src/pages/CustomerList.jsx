@@ -111,7 +111,7 @@ export default function CustomerList() {
                         >
                           {loadingId === c._id ? (
                             <>
-                              <Spinner /> Deactivating...
+                              <Spinner />
                             </>
                           ) : (
                             "Deactivate"
@@ -125,7 +125,7 @@ export default function CustomerList() {
                         >
                           {loadingId === c._id ? (
                             <>
-                              <Spinner /> Activating...
+                              <Spinner />
                             </>
                           ) : (
                             "Activate"
