@@ -16,7 +16,7 @@ export default function VendorList() {
     <span className="inline-block w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
   );
   const Spinner2 = () => (
-    <span className="inline-block w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
+    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
   );
 
   // Fetch vendors
