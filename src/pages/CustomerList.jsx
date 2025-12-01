@@ -7,23 +7,25 @@ export default function CustomerList() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [limit] = useState(10);
-
-  const [loadingId, setLoadingId] = useState(null); // NEW: loading for a specific row
+  const [loadingId, setLoadingId] = useState(null); // Loader for specific row
 
   const navigate = useNavigate();
 
-  // Fetch customers based on the page and limit
+  // Spinner component
+  const Spinner = () => (
+    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+  );
+
+  // Fetch customers
   const fetchCustomers = async (pageNum = 1) => {
     try {
       const res = await api.get("/customers", {
-        params: { page: pageNum, limit: limit },
+        params: { page: pageNum, limit },
       });
-
       setCustomers(res.data.items || []);
       setTotal(res.data.total || 0);
       setPage(res.data.page);
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert("Failed to load customers");
     }
   };
@@ -34,34 +36,26 @@ export default function CustomerList() {
 
   // Toggle Active/Inactive status
   const toggleStatus = async (id, cur) => {
-    setLoadingId(id); // Start loader for this row
-
+    setLoadingId(id);
     try {
       await api.patch(`/customers/${id}/status`, {
         status: cur === "Active" ? "Inactive" : "Active",
       });
-
-      await fetchCustomers(page); // Refresh table
-    } catch (e) {
+      await fetchCustomers(page);
+    } catch {
       alert("Status update failed");
     } finally {
-      setLoadingId(null); // Stop loader
+      setLoadingId(null);
     }
   };
 
-  const handlePrevPage = () => {
-    if (page > 1) setPage(page - 1);
-  };
-
-  const handleNextPage = () => {
-    if (page * limit < total) setPage(page + 1);
-  };
+  const handlePrevPage = () => page > 1 && setPage(page - 1);
+  const handleNextPage = () => page * limit < total && setPage(page + 1);
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-semibold">Customer Master</h1>
-
         <Link to="/customers/new">
           <button className="px-4 py-2 bg-gray-900 hover:bg-gray-800 text-white rounded">
             Add Customer
@@ -82,16 +76,13 @@ export default function CustomerList() {
                 <th className="py-2">Action</th>
               </tr>
             </thead>
-
             <tbody>
               {customers.map((c) => (
-                <tr key={c._id} className="table-row">
+                <tr key={c._id}>
                   <td className="py-2">{c.customerCode}</td>
                   <td>{c.customerName}</td>
                   <td>{c.city}</td>
                   <td>{c.phone}</td>
-
-                  {/* Status color-coded */}
                   <td
                     className={`font-semibold ${
                       c.status === "Active"
@@ -101,10 +92,8 @@ export default function CustomerList() {
                   >
                     {c.status}
                   </td>
-
                   <td>
                     <div className="flex gap-2 justify-center">
-
                       {/* Edit Button */}
                       <button
                         onClick={() => navigate(`/customers/edit/${c._id}`)}
@@ -113,22 +102,34 @@ export default function CustomerList() {
                         Edit
                       </button>
 
-                      {/* Activate / Deactivate Button with Loader */}
+                      {/* Activate/Deactivate Button with Spinner */}
                       {c.status === "Active" ? (
                         <button
                           onClick={() => toggleStatus(c._id, c.status)}
-                          className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition w-24"
+                          className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition w-32 flex items-center justify-center gap-2"
                           disabled={loadingId === c._id}
                         >
-                          {loadingId === c._id ? "Deactivating..." : "Deactivate"}
+                          {loadingId === c._id ? (
+                            <>
+                              <Spinner /> Deactivating...
+                            </>
+                          ) : (
+                            "Deactivate"
+                          )}
                         </button>
                       ) : (
                         <button
                           onClick={() => toggleStatus(c._id, c.status)}
-                          className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition w-24"
+                          className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition w-32 flex items-center justify-center gap-2"
                           disabled={loadingId === c._id}
                         >
-                          {loadingId === c._id ? "Activating..." : "Activate"}
+                          {loadingId === c._id ? (
+                            <>
+                              <Spinner /> Activating...
+                            </>
+                          ) : (
+                            "Activate"
+                          )}
                         </button>
                       )}
                     </div>
@@ -156,11 +157,9 @@ export default function CustomerList() {
           >
             Previous
           </button>
-
           <span>
             Page {page} of {Math.ceil(total / limit)}
           </span>
-
           <button
             onClick={handleNextPage}
             disabled={page * limit >= total}

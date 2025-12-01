@@ -7,59 +7,48 @@ export default function VendorList() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [limit, setLimit] = useState(10);
-
-  const [loadingId, setLoadingId] = useState(null); // NEW: loading state for a specific vendor
+  const [loadingId, setLoadingId] = useState(null); // Loader for specific row
 
   const navigate = useNavigate();
 
-  // Fetch vendors with pagination
+  // Spinner component
+  const Spinner = () => (
+    <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+  );
+
   const fetchVendors = async (pageNum = 1) => {
     try {
       const res = await api.get("/vendors", {
-        params: {
-          page: pageNum,
-          limit,
-        },
+        params: { page: pageNum, limit },
       });
-
       setVendors(res.data.items || []);
       setTotal(res.data.total || 0);
       setPage(res.data.page);
-    } catch (e) {
-      console.error(e);
+    } catch {
       alert("Failed to load vendors");
     }
   };
 
-  // Fetch data when component mounts or page changes
   useEffect(() => {
     fetchVendors(page);
   }, [page]);
 
-  // Toggle Active/Inactive status
   const toggleStatus = async (id, cur) => {
-    setLoadingId(id); // Start loader
-
+    setLoadingId(id);
     try {
       await api.patch(`/vendors/${id}/status`, {
         status: cur === "Active" ? "Inactive" : "Active",
       });
-
-      await fetchVendors(page); // Refresh table
-    } catch (e) {
+      await fetchVendors(page);
+    } catch {
       alert("Status update failed");
     } finally {
-      setLoadingId(null); // Stop loader
+      setLoadingId(null);
     }
   };
 
-  const handlePrevPage = () => {
-    if (page > 1) setPage(page - 1);
-  };
-
-  const handleNextPage = () => {
-    if (page * limit < total) setPage(page + 1);
-  };
+  const handlePrevPage = () => page > 1 && setPage(page - 1);
+  const handleNextPage = () => page * limit < total && setPage(page + 1);
 
   return (
     <div>
@@ -88,24 +77,19 @@ export default function VendorList() {
 
             <tbody>
               {vendors.map((v) => (
-                <tr key={v._id} className="table-row">
+                <tr key={v._id}>
                   <td className="py-2">{v.vendorCode}</td>
                   <td>{v.vendorName}</td>
                   <td>{v.city}</td>
-
                   <td
                     className={`font-semibold ${
-                      v.status === "Active"
-                        ? "text-green-600"
-                        : "text-red-600"
-                    } w-24`}
+                      v.status === "Active" ? "text-green-600" : "text-red-600"
+                    } w-24 text-center`}
                   >
                     {v.status}
                   </td>
-
                   <td>
                     <div className="flex gap-2 justify-center">
-
                       {/* Edit Button */}
                       <button
                         onClick={() => navigate(`/vendors/edit/${v._id}`)}
@@ -114,25 +98,36 @@ export default function VendorList() {
                         Edit
                       </button>
 
-                      {/* Activate / Deactivate with Loader */}
+                      {/* Activate/Deactivate Button with Spinner */}
                       {v.status === "Active" ? (
                         <button
                           onClick={() => toggleStatus(v._id, v.status)}
-                          className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition w-24"
+                          className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition w-32 flex items-center justify-center gap-2"
                           disabled={loadingId === v._id}
                         >
-                          {loadingId === v._id ? "Deactivating..." : "Deactivate"}
+                          {loadingId === v._id ? (
+                            <>
+                              <Spinner /> Deactivating...
+                            </>
+                          ) : (
+                            "Deactivate"
+                          )}
                         </button>
                       ) : (
                         <button
                           onClick={() => toggleStatus(v._id, v.status)}
-                          className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition w-24"
+                          className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition w-32 flex items-center justify-center gap-2"
                           disabled={loadingId === v._id}
                         >
-                          {loadingId === v._id ? "Activating..." : "Activate"}
+                          {loadingId === v._id ? (
+                            <>
+                              <Spinner /> Activating...
+                            </>
+                          ) : (
+                            "Activate"
+                          )}
                         </button>
                       )}
-
                     </div>
                   </td>
                 </tr>
@@ -158,11 +153,9 @@ export default function VendorList() {
           >
             Previous
           </button>
-
           <span>
             Page {page} of {Math.ceil(total / limit)}
           </span>
-
           <button
             onClick={handleNextPage}
             disabled={page * limit >= total}
