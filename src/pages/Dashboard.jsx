@@ -61,7 +61,7 @@ export default function Dashboard() {
           {!loadingCustomers && (
             <Link
               to="/customers"
-              className="text-sm text-blue-600 hover:underline mt-2 inline-block text-right w-full"
+              className="text-sm text-gray-900 hover:underline mt-2 inline-block text-right w-full"
             >
               See All
             </Link>
@@ -78,7 +78,7 @@ export default function Dashboard() {
           {!loadingVendors && (
             <Link
               to="/vendors"
-              className="text-sm text-blue-600 hover:underline mt-2 inline-block text-right w-full"
+              className="text-sm text-gray-900 hover:underline mt-2 inline-block text-right w-full"
             >
               See All
             </Link>
