@@ -20,7 +20,7 @@ export default function VendorForm() {
     gstin: '',
     msme: false
   });
-  const [contacts, setContacts] = useState([{ name: '', phone: '', isPrimary: true }]);
+  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(false);   // spinner for save button
   const [fetching, setFetching] = useState(false); // spinner for load
 

@@ -1,27 +1,22 @@
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { toast } from "react-toastify"; // For toast notifications
+import { toast } from "react-toastify";
 
 export default function ContactModal({ open, onClose, onSave, initial }) {
   const [form, setForm] = useState({
     name: "",
+    designation: "",
     phone: "",
     email: "",
-    designation: "",
     isPrimary: false,
   });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (initial) {
       setForm(initial);
     } else {
-      setForm({
-        name: "",
-        phone: "",
-        email: "",
-        designation: "",
-        isPrimary: false,
-      });
+      setForm({ name: "", designation: "", phone: "", email: "", isPrimary: false });
     }
   }, [initial]);
 
@@ -33,27 +28,32 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
     }));
   };
 
-  // Validate form fields
   const validateForm = () => {
     if (!form.name || !form.phone) {
       toast.error("Name and phone are required");
       return false;
     }
-    // Email validation (basic format check)
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (form.email && !emailRegex.test(form.email)) {
-      toast.error("Please enter a valid email address");
-      return false;
+    if (form.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email)) {
+        toast.error("Please enter a valid email");
+        return false;
+      }
     }
     return true;
   };
 
-  const save = () => {
-    if (!validateForm()) return; // Don't proceed if validation fails
+  const save = async () => {
+    if (!validateForm()) return;
 
-    onSave(form);
-    onClose();
-    toast.success("Contact saved successfully");
+    setSaving(true);
+    try {
+      await new Promise((res) => setTimeout(res, 500)); // simulate async
+      onSave(form);
+      onClose();
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -88,24 +88,35 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
 
               <div className="mt-4 space-y-3">
                 <div>
-                  <label className="block text-sm text-gray-600">Name</label>
+                  <label className="block text-sm text-gray-600">Name *</label>
                   <input
                     name="name"
                     value={form.name}
                     onChange={handleChange}
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="Enter contact name"
+                    className="w-full border rounded px-3 py-2 mt-1"
+                    placeholder="Enter name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-600">Phone</label>
+                  <label className="block text-sm text-gray-600">Designation</label>
+                  <input
+                    name="designation"
+                    value={form.designation}
+                    onChange={handleChange}
+                    className="w-full border rounded px-3 py-2 mt-1"
+                    placeholder="Enter designation"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm text-gray-600">Phone *</label>
                   <input
                     name="phone"
                     value={form.phone}
                     onChange={handleChange}
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="Enter phone number"
+                    className="w-full border rounded px-3 py-2 mt-1"
+                    placeholder="Enter phone"
                   />
                 </div>
 
@@ -115,8 +126,8 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
                     name="email"
                     value={form.email}
                     onChange={handleChange}
-                    className="w-full border rounded px-3 py-2"
-                    placeholder="Enter email address"
+                    className="w-full border rounded px-3 py-2 mt-1"
+                    placeholder="Enter email"
                   />
                 </div>
 
@@ -133,7 +144,6 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
                 </div>
               </div>
 
-              {/* ⬇️ BUTTONS CENTERED NOW */}
               <div className="mt-6 flex justify-center gap-2">
                 <button
                   onClick={onClose}
@@ -144,9 +154,10 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
 
                 <button
                   onClick={save}
-                  disabled={!form.name || !form.phone}
-                  className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition"
+                  disabled={saving}
+                  className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition flex items-center gap-2"
                 >
+                  {saving && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>}
                   Save
                 </button>
               </div>
