@@ -82,6 +82,9 @@ export default function CustomerForm() {
   const Spinner = () => (
     <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
   );
+  const Spinner2 = () => (
+    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+  );
 
   // Show centered spinner while fetching
   if (fetching) {
@@ -177,7 +180,7 @@ export default function CustomerForm() {
           disabled={loading}
           className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition w-24 flex items-center justify-center"
         >
-          {loading ? <Spinner /> : id ? 'Update' : 'Create'}
+          {loading ? <Spinner2 /> : id ? 'Update' : 'Create'}
         </button>
         <button 
           onClick={() => navigate('/customers')} 
