@@ -80,13 +80,13 @@ export default function CustomerForm() {
 
   // Spinner component
   const Spinner = () => (
-    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+    <span className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></span>
   );
 
   // Show centered spinner while fetching
   if (fetching) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex justify-center">
         <Spinner />
       </div>
     );
