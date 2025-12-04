@@ -96,7 +96,7 @@ export default function Dashboard() {
           {/* Show spinner */}
           {loadingRecent && (
             <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Spinner /> Loading recent activity...
+              <Spinner />
             </div>
           )}
 
