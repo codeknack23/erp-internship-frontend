@@ -111,6 +111,7 @@ export default function VendorForm() {
             value={form.vendorName} 
             onChange={e => setForm({ ...form, vendorName: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
+            placeholder="Enter Vendor Name"
           />
 
           <label className="block text-sm text-gray-600 mt-3">
@@ -120,6 +121,7 @@ export default function VendorForm() {
             value={form.shortName} 
             onChange={e => setForm({ ...form, shortName: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
+            placeholder="Enter Short Name"
           />
 
           <label className="block text-sm text-gray-600 mt-3">City</label>
@@ -127,6 +129,7 @@ export default function VendorForm() {
             value={form.city} 
             onChange={e => setForm({ ...form, city: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
+            placeholder="Enter City"
           />
         </div>
 
@@ -138,6 +141,7 @@ export default function VendorForm() {
             value={form.email} 
             onChange={e => setForm({ ...form, email: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
+            placeholder="Enter Email"
           />
 
           <label className="block text-sm text-gray-600 mt-3">Phone</label>
@@ -145,6 +149,7 @@ export default function VendorForm() {
             value={form.phone} 
             onChange={e => setForm({ ...form, phone: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
+            placeholder="Enter Phone"
           />
 
           <label className="block text-sm text-gray-600 mt-3">GSTIN</label>
@@ -152,6 +157,7 @@ export default function VendorForm() {
             value={form.gstin} 
             onChange={e => setForm({ ...form, gstin: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
+            placeholder="Enter GSTIN"
           />
 
           <label className="inline-flex items-center gap-2 mt-3">

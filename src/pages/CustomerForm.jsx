@@ -109,7 +109,7 @@ export default function CustomerForm() {
           <input 
             value={form.customerName} 
             onChange={e => setForm({ ...form, customerName: e.target.value })} 
-            className="w-full border rounded px-3 py-2 mt-1" 
+            className="w-full border rounded px-3 py-2 mt-1" placeholder="Enter Name"
           />
 
           <label className="block text-sm text-gray-600 mt-3">
@@ -118,7 +118,7 @@ export default function CustomerForm() {
           <input 
             value={form.shortName} 
             onChange={e => setForm({ ...form, shortName: e.target.value })} 
-            className="w-full border rounded px-3 py-2 mt-1" 
+            className="w-full border rounded px-3 py-2 mt-1" placeholder="Enter Short Name"
           />
 
           <div className="grid grid-cols-2 gap-3 mt-3">
@@ -128,6 +128,7 @@ export default function CustomerForm() {
                 value={form.city} 
                 onChange={e => setForm({ ...form, city: e.target.value })} 
                 className="w-full border rounded px-3 py-2 mt-1" 
+                placeholder="Enter City"
               />
             </div>
             <div>
@@ -136,6 +137,7 @@ export default function CustomerForm() {
                 value={form.state} 
                 onChange={e => setForm({ ...form, state: e.target.value })} 
                 className="w-full border rounded px-3 py-2 mt-1" 
+                placeholder="Enter State"
               />
             </div>
           </div>
@@ -145,6 +147,7 @@ export default function CustomerForm() {
             value={form.pincode} 
             onChange={e => setForm({ ...form, pincode: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
+            placeholder="Enter Pincode"
           />
         </div>
 
@@ -156,18 +159,21 @@ export default function CustomerForm() {
             value={form.email} 
             onChange={e => setForm({ ...form, email: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
+            placeholder="Enter Email"
           />
           <label className="block text-sm text-gray-600 mt-3">Phone</label>
           <input 
             value={form.phone} 
             onChange={e => setForm({ ...form, phone: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
+            placeholder="Enter Phone"
           />
           <label className="block text-sm text-gray-600 mt-3">GSTIN</label>
           <input 
             value={form.gstin} 
             onChange={e => setForm({ ...form, gstin: e.target.value })} 
             className="w-full border rounded px-3 py-2 mt-1" 
+            placeholder="Enter GSTIN"
           />
         </div>
       </div>
