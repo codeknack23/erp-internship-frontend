@@ -160,14 +160,14 @@ export default function VendorForm() {
             placeholder="Enter GSTIN"
           />
 
-          <label className="inline-flex items-center gap-2 mt-3">
+          {/* <label className="inline-flex items-center gap-2 mt-3">
             <input 
               type="checkbox" 
               checked={form.msme} 
               onChange={e => setForm({ ...form, msme: e.target.checked })} 
             />
             <span className="text-sm">MSME</span>
-          </label>
+          </label> */}
         </div>
       </div>
 

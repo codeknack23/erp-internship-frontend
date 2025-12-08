@@ -7,10 +7,12 @@ import CustomerList from "./pages/CustomerList";
 import CustomerForm from "./pages/CustomerForm";
 import VendorList from "./pages/VendorList";
 import VendorForm from "./pages/VendorForm";
+import ProjectList from "./pages/ProjectList";
+import ProjectForm from "./pages/ProjectForm";
 
 // Import react-toastify for global notifications
-import { ToastContainer } from 'react-toastify'; 
-import 'react-toastify/dist/ReactToastify.css'; // Import toastify CSS
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
 
 export default function App() {
   return (
@@ -28,21 +30,24 @@ export default function App() {
             <Route path="/vendors" element={<VendorList />} />
             <Route path="/vendors/new" element={<VendorForm />} />
             <Route path="/vendors/edit/:id" element={<VendorForm />} />
+            <Route path="/projects" element={<ProjectList />} />
+            <Route path="/projects/new" element={<ProjectForm />} />
+            <Route path="/projects/edit/:id" element={<ProjectForm />} />
           </Routes>
         </main>
       </div>
 
       {/* Global ToastContainer for notifications */}
-      <ToastContainer 
-        position="top-right" 
-        autoClose={5000} 
-        hideProgressBar 
-        newestOnTop 
-        closeOnClick 
-        rtl={false} 
-        pauseOnFocusLoss 
-        draggable 
-        pauseOnHover 
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
       />
     </div>
   );

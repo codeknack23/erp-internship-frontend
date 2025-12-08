@@ -9,14 +9,23 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
     phone: "",
     email: "",
     isPrimary: false,
+    level: "project",   // ✅ NEW FIELD
   });
+
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (initial) {
-      setForm(initial);
+      setForm({ ...initial, level: initial.level || "project" });
     } else {
-      setForm({ name: "", designation: "", phone: "", email: "", isPrimary: false });
+      setForm({
+        name: "",
+        designation: "",
+        phone: "",
+        email: "",
+        isPrimary: false,
+        level: "project",
+      });
     }
   }, [initial]);
 
@@ -48,7 +57,7 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
 
     setSaving(true);
     try {
-      await new Promise((res) => setTimeout(res, 500)); // simulate async
+      await new Promise((res) => setTimeout(res, 300));
       onSave(form);
       onClose();
     } finally {
@@ -131,6 +140,23 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
                   />
                 </div>
 
+                {/* ✅ NEW DROPDOWN */}
+                <div>
+                  <label className="block text-sm text-gray-600">
+                    Contact Level
+                  </label>
+                  <select
+                    name="level"
+                    value={form.level}
+                    onChange={handleChange}
+                    className="w-full border rounded px-3 py-2 mt-1"
+                  >
+                    <option value="project">Project</option>
+                    <option value="branch">Branch</option>
+                    <option value="department">Department</option>
+                  </select>
+                </div>
+
                 <div>
                   <label className="inline-flex items-center gap-2">
                     <input
@@ -145,10 +171,7 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
               </div>
 
               <div className="mt-6 flex justify-center gap-2">
-                <button
-                  onClick={onClose}
-                  className="px-3 py-1 rounded border"
-                >
+                <button onClick={onClose} className="px-3 py-1 rounded border">
                   Cancel
                 </button>
 
@@ -157,7 +180,9 @@ export default function ContactModal({ open, onClose, onSave, initial }) {
                   disabled={saving}
                   className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition flex items-center gap-2"
                 >
-                  {saving && <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>}
+                  {saving && (
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  )}
                   Save
                 </button>
               </div>
