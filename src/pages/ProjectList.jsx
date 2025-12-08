@@ -50,6 +50,12 @@ export default function ProjectList() {
     setOpen(true);
   };
 
+  // ✅ DATE FORMATTER
+  const formatDate = (date) => {
+    if (!date) return "-";
+    return new Date(date).toLocaleDateString("en-IN");
+  };
+
   return (
     <div>
       {/* ✅ HEADER */}
@@ -74,6 +80,8 @@ export default function ProjectList() {
                 <th className="py-2">Company</th>
                 <th className="py-2">Branch</th>
                 <th className="py-2">Department</th>
+                <th className="py-2">Start Date</th>
+                <th className="py-2">End Date</th>
                 <th className="py-2">Status</th>
                 <th className="py-2">Files</th>
                 <th className="py-2">Action</th>
@@ -83,13 +91,13 @@ export default function ProjectList() {
             <tbody>
               {loadingList ? (
                 <tr>
-                  <td colSpan="8" className="py-6 text-center text-gray-500">
+                  <td colSpan="10" className="py-6 text-center text-gray-500">
                     <Spinner />
                   </td>
                 </tr>
               ) : projects.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="py-6 text-center text-gray-500">
+                  <td colSpan="10" className="py-6 text-center text-gray-500">
                     No projects found
                   </td>
                 </tr>
@@ -101,6 +109,8 @@ export default function ProjectList() {
                     <td>{p.company}</td>
                     <td>{p.branch}</td>
                     <td>{p.department}</td>
+                    <td>{formatDate(p.startDate)}</td>
+                    <td>{formatDate(p.endDate)}</td>
 
                     <td
                       className={`font-semibold ${
@@ -114,7 +124,6 @@ export default function ProjectList() {
                       {p.status}
                     </td>
 
-                    {/* ✅ FILE COUNT */}
                     <td>
                       {p.attachments?.length > 0 ? (
                         <span className="font-semibold text-green-600">
@@ -125,11 +134,12 @@ export default function ProjectList() {
                       )}
                     </td>
 
-                    {/* ✅ ACTIONS */}
                     <td>
                       <div className="flex gap-2 justify-center">
                         <button
-                          onClick={() => navigate(`/projects/edit/${p._id}`)}
+                          onClick={() =>
+                            navigate(`/projects/edit/${p._id}`)
+                          }
                           className="px-3 py-1 rounded bg-gray-900 text-white hover:bg-gray-800 transition w-24"
                         >
                           Edit
@@ -178,82 +188,80 @@ export default function ProjectList() {
         )}
       </div>
 
-      {/* ✅ FILE PREVIEW MODAL WITH SIMPLE UI */}
-<Transition show={open} as={Fragment}>
-  <Dialog as="div" className="relative z-50" onClose={() => setOpen(false)}>
-    <Transition.Child
-      as={Fragment}
-      enter="ease-out duration-200"
-      enterFrom="opacity-0"
-      enterTo="opacity-100"
-      leave="ease-in duration-150"
-      leaveFrom="opacity-100"
-      leaveTo="opacity-0"
-    >
-      <div className="fixed inset-0 bg-black/30" />
-    </Transition.Child>
+      {/* ✅ FILE PREVIEW MODAL */}
+      <Transition show={open} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={() => setOpen(false)}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-200"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-150"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black/30" />
+          </Transition.Child>
 
-    <div className="fixed inset-0 flex items-center justify-center p-4">
-      <Dialog.Panel className="bg-white rounded p-6 w-full max-w-md shadow">
-        <Dialog.Title className="text-lg font-semibold mb-4">
-          Project Attachments
-        </Dialog.Title>
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            <Dialog.Panel className="bg-white rounded p-6 w-full max-w-md shadow">
+              <Dialog.Title className="text-lg font-semibold mb-4">
+                Project Attachments
+              </Dialog.Title>
 
-        <div className="space-y-3">
-          {files.length > 0 ? (
-            files.map((f, i) => (
-              <div key={i} className="flex items-center justify-between">
-                {/* ✅ FILE NAME */}
-                <span className="text-sm text-gray-700 truncate w-52">
-                  {f.originalName}
-                </span>
+              <div className="space-y-3">
+                {files.length > 0 ? (
+                  files.map((f, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-700 truncate w-52">
+                        {f.originalName}
+                      </span>
 
-                {/* ✅ DOWNLOAD BUTTON */}
+                      <button
+                        onClick={async () => {
+                          try {
+                            const response = await fetch(f.url);
+                            const blob = await response.blob();
+                            const downloadUrl =
+                              window.URL.createObjectURL(blob);
+
+                            const a = document.createElement("a");
+                            a.href = downloadUrl;
+                            a.download = f.originalName;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+
+                            window.URL.revokeObjectURL(downloadUrl);
+                          } catch {
+                            toast.error("File download failed");
+                          }
+                        }}
+                        className="px-3 py-1 bg-gray-900 hover:bg-gray-800 text-white rounded text-sm"
+                      >
+                        Download
+                      </button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-400 text-center">
+                    No files available
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-5 text-center">
                 <button
-                  onClick={async () => {
-                    try {
-                      const response = await fetch(f.url);
-                      const blob = await response.blob();
-                      const downloadUrl = window.URL.createObjectURL(blob);
-
-                      const a = document.createElement("a");
-                      a.href = downloadUrl;
-                      a.download = f.originalName;
-                      document.body.appendChild(a);
-                      a.click();
-                      document.body.removeChild(a);
-
-                      window.URL.revokeObjectURL(downloadUrl);
-                    } catch {
-                      toast.error("File download failed");
-                    }
-                  }}
-                  className="px-3 py-1 bg-gray-900 hover:bg-gray-800 text-white rounded text-sm"
+                  onClick={() => setOpen(false)}
+                  className="px-4 py-1 bg-gray-900 hover:bg-gray-800 text-white rounded"
                 >
-                  Download
+                  Close
                 </button>
               </div>
-            ))
-          ) : (
-            <p className="text-sm text-gray-400 text-center">
-              No files available
-            </p>
-          )}
-        </div>
-
-        <div className="mt-5 text-center">
-          <button
-            onClick={() => setOpen(false)}
-            className="px-4 py-1 bg-gray-900 hover:bg-gray-800 text-white rounded"
-          >
-            Close
-          </button>
-        </div>
-      </Dialog.Panel>
-    </div>
-  </Dialog>
-</Transition>
-
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      </Transition>
     </div>
   );
 }

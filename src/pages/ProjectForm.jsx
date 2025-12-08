@@ -19,6 +19,7 @@ export default function ProjectForm() {
     startDate: "",
     endDate: "",
     estimatedBudget: "",
+    expectedDuration: "",
     status: "Not Started",
     attachments: [],
   });
@@ -34,6 +35,22 @@ export default function ProjectForm() {
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
+
+  useEffect(() => {
+    if (form.startDate && form.endDate) {
+      const start = new Date(form.startDate);
+      const end = new Date(form.endDate);
+
+      if (end >= start) {
+        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+        setForm((prev) => ({
+          ...prev,
+          expectedDuration: `${days} Days`,
+        }));
+      }
+    }
+  }, [form.startDate, form.endDate]);
 
   useEffect(() => {
     loadMeta();
@@ -233,6 +250,26 @@ export default function ProjectForm() {
               </option>
             ))}
           </select>
+          <label className="block text-sm text-gray-600 mt-3">
+            Estimated Budget
+          </label>
+          <input
+            name="estimatedBudget"
+            value={form.estimatedBudget}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+          <label className="block text-sm text-gray-600 mt-3">
+            Expected Duration (Auto / Manual)
+          </label>
+          <input
+            name="expectedDuration"
+            value={form.expectedDuration}
+            onChange={(e) =>
+              setForm({ ...form, expectedDuration: e.target.value })
+            }
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
         </div>
 
         <div className="card">
@@ -279,6 +316,25 @@ export default function ProjectForm() {
             <option>Completed</option>
             <option>Cancelled</option>
           </select>
+
+          <label className="block text-sm text-gray-600 mt-3">Start Date</label>
+          <input
+            type="date"
+            name="startDate"
+            value={form.startDate}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+
+          <label className="block text-sm text-gray-600 mt-3">End Date</label>
+          <input
+            type="date"
+            name="endDate"
+            value={form.endDate}
+            onChange={handleChange}
+            className="w-full border rounded px-3 py-2 mt-1"
+          />
+
         </div>
       </div>
 
@@ -311,40 +367,39 @@ export default function ProjectForm() {
         )}
 
         {form.attachments.map((f, i) => (
-  <div key={i} className="flex justify-between mt-2 text-sm">
-    <button
-      onClick={async () => {
-        try {
-          const response = await fetch(f.url);
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
+          <div key={i} className="flex justify-between mt-2 text-sm">
+            <button
+              onClick={async () => {
+                try {
+                  const response = await fetch(f.url);
+                  const blob = await response.blob();
+                  const url = window.URL.createObjectURL(blob);
 
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = f.originalName;   // ✅ forces download
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = f.originalName; // ✅ forces download
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
 
-          window.URL.revokeObjectURL(url);
-        } catch {
-          toast.error("Download failed");
-        }
-      }}
-      className="text-blue-600 hover:underline"
-    >
-      {f.originalName}
-    </button>
+                  window.URL.revokeObjectURL(url);
+                } catch {
+                  toast.error("Download failed");
+                }
+              }}
+              className="text-blue-600 hover:underline"
+            >
+              {f.originalName}
+            </button>
 
-    <button
-      onClick={() => removeOldAttachment(i)}
-      className="text-red-500"
-    >
-      Remove
-    </button>
-  </div>
-))}
-
+            <button
+              onClick={() => removeOldAttachment(i)}
+              className="text-red-500"
+            >
+              Remove
+            </button>
+          </div>
+        ))}
       </div>
 
       {/* ✅ CONTACTS */}
